@@ -49,7 +49,17 @@ public class NewDBManager{
 
         File[] imagenArch=imagen.listFiles(filterImg);
         Arrays.sort(imagenArch);
+        
+        for(int i=0;i<frontalArch.length;i++){
+            System.out.println(frontalArch[i].getName());
+        }
 
+        //System.out.println("compare "+fix(frontalArch[0].getName()).compareTo(fix(imagenArch[0].getName())));
+        //System.out.println(frontalArch[0].getName()+" "+imagenArch[0].getName());
+
+        System.out.println(new File(frontalArch[0].getName()).compareTo(lateralArch[0]));
+        Arrays.binarySearch(imagenArch, imagen);
+        
         try{
             fileCreator(frontalArch, lateralArch, imagenArch);
         }
@@ -74,7 +84,13 @@ public class NewDBManager{
         for(int i=1; i<frontalArch.length; i++){
             if(derives(aux, frontalArch[i].getName())){
                 c++;
-                continue;
+                if(i!=frontalArch.length-1) 
+                    continue;
+                else{
+                    i++;
+                    write(i, c, bw, frontalArch, lateralArch, imagenArch);
+                    break;
+                }
             }
             write(i, c, bw, frontalArch, lateralArch, imagenArch);//No arreglado
             c=1;
@@ -93,13 +109,17 @@ public class NewDBManager{
     public static String fix(String s1){
         return s1.substring(0, s1.lastIndexOf("."));
     }
-
+    
+    public static String fix(String s1, char c){
+        return s1.substring(0,s1.lastIndexOf(c));
+    }
+    
     public static void write(int i, int c, BufferedWriter bw, File[] frontalArch, File[] lateralArch, File[] imagenArch){
         try{
-            bw.write(fix(frontalArch[i-c].getName())+" "+validateVid(frontalArch[i-c], lateralArch, i-c)+" "+validateImg(frontalArch[i-c], imagenArch, i-c)+" "+(c-1));
+            bw.write(fix(frontalArch[i-c].getName())+" "+validateVid(frontalArch[i-c], lateralArch, i-c)+" "+validateImg(frontalArch[i-c], imagenArch));
             bw.newLine();
             for(c--; c>0; c--){
-                bw.write("\t"+fix(frontalArch[i-c].getName())+" "+validateVid(frontalArch[i-c], lateralArch, i-c)+" "+validateImg(frontalArch[i-c], imagenArch, i-c));
+                bw.write("\t"+fix(frontalArch[i-c].getName())+" "+validateVid(frontalArch[i-c], lateralArch, i-c)+" "+validateImg(frontalArch[i-c], imagenArch));
                 bw.newLine();
             }
 
@@ -121,9 +141,10 @@ public class NewDBManager{
      */
     public static String validateVid(File source, File[] target, int c){
         int i=1, e=0;
+        String name=fix(source.getName());
         try{
             while(true){
-                if(fix(source.getName()).equals(fix(target[c].getName())))
+                if(name.equals(fix(target[c].getName())))
                     return "OK";
                 c=c+(++e*(i));
                 i*=-1;
@@ -133,7 +154,7 @@ public class NewDBManager{
             i*=-1;
             try{
                 while(true){
-                    if(fix(source.getName()).equals(fix(target[c].getName())))
+                    if(name.equals(fix(target[c].getName())))
                         return "OK";
                     c=c+(++e*(i));
                 }
@@ -144,7 +165,43 @@ public class NewDBManager{
         }
     }
     
-    public static String validateImg(File source, File[] target, int c){
-        return "";
+    public static String validateImg(File source, File[] target){
+        String name=fix(source.getName());
+        if(name.contains("_"))  name=name.substring(0, name.lastIndexOf("_"));
+        
+        int i1=0, i2=target.length-1;
+                
+        while(i1<=i2){
+            System.out.println("Comparing "+name+" with "+fix(target[(i1+i2)/2].getName())+" "+name.compareTo(fix(target[(i1+i2)/2].getName())));
+            if(name.compareTo(fix(target[(i1+i2)/2].getName()))==0){
+                System.out.println("");
+                return "OK";
+            }
+            else if(name.compareTo(fix(target[(i1+i2)/2].getName()))>0)  i1=(i1+i2)/2+1;
+            else //if(name.compareTo(target[(i1+i2)/2].getName())<0)
+                i2=(i1+i2)/2-1;
+        }
+        System.out.println("");
+        
+        /*while(ok1 && ok2){
+            try{
+            if(name.equals(fix(target[c].getName())))
+                return "OK";
+            else{
+                if(name.compareTo(target[c].getName())<0){
+                    c--;
+                    ok1=false;
+                }
+                else{
+                    c++;
+                    ok2=false;
+                }
+            }
+            }
+            catch(IndexOutOfBoundsException ax){
+                break;
+            }
+        }*/
+        return "NO";
     }
 }

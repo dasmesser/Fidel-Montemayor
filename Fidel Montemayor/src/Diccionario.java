@@ -24,7 +24,7 @@ public class Diccionario extends JFrame{
     JSuggestField jsf;      GridBagConstraints cJsf;
     
       
-    public Diccionario(File archivo) throws IOException{
+    public Diccionario(File archivo){
         super("Diccionario Guerrero de Lengua de Señas Mexicanas");
         
         setContentPane(new MyPanel(".\\Archivos del programa\\Fondo.jpg", true));
@@ -34,9 +34,10 @@ public class Diccionario extends JFrame{
         
         //Inicio aleatorio
         int num=((int)Math.random()*500+1);
-        BufferedReader br=new BufferedReader(new FileReader(archivo));
+        BufferedReader br=null;
         String data;
         try{
+            br=new BufferedReader(new FileReader(archivo));
             while(num!=0){
                 num--;
                 br.readLine();
@@ -47,7 +48,11 @@ public class Diccionario extends JFrame{
             ax.printStackTrace();
         }
         finally{
-            br.close();
+            if(br!=null)
+                try{
+                    br.close();
+                }
+                catch(IOException ax){}
         }
         //Inicio aleatorio
         

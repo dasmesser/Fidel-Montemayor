@@ -1,19 +1,9 @@
-OK accidente 3
-	OK accidente_Monterrey
-	OK accidente_Morelia
-	OK accidente_Veracruz
-OK aguila 1
-	OK aguila_Zacatecas
-OK alcohol 3
-	OK alcohol_Aguascalientes
-	OK alcohol_Morelos
-	OK alcohol_Yucatan
-OK avion 0
-OK ayer 0
-OK ayudar 1
-	OK ayudar_Colima
-OK cable 0
-OK calificacion 1
-	OK calificacion_Sinaloa
-OK cobarde 1
-	OK cobarde_Michoacan
+accidente OK NO
+	accidente_1 OK NO
+	accidente_2 OK NO
+camion OK NO
+	camion_1 OK NO
+	camion_2 OK NO
+	camion_3 OK NO
+delfin OK NO
+elefante OK NO
