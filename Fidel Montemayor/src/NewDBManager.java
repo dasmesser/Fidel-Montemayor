@@ -15,33 +15,41 @@ import java.util.logging.Logger;
 public class NewDBManager{
 
     public static void init(){
-        File frontal=new File(".\\Archivos del programa\\Frontal");
-        File lateral=new File(".\\Archivos del programa\\Lateral");
+        File video=new File(".\\Archivos del programa\\Videos");
+        File definicion=new File(".\\Archivos del programa\\Definiciones");
         File imagen=new File(".\\Archivos del programa\\Imagenes");
 
         FileFilter filterVid=new FileFilter(){
-
             @Override
             public boolean accept(File pathname){
                 String aux=pathname.getName();
-                if(aux.endsWith(".mov")) //Agregar algún manejador de archivos de imagen faltantes
+                if(aux.endsWith(".avi"))
                     return true;
                 return false;
             }
         };
-
-        File[] frontalArch=frontal.listFiles(filterVid);
-        File[] lateralArch=lateral.listFiles(filterVid);
-
-        Arrays.sort(frontalArch);
-        Arrays.sort(lateralArch);
-
-        FileFilter filterImg=new FileFilter(){
-
+        File[] videoArch=video.listFiles(filterVid);
+        Arrays.sort(videoArch);
+        
+        
+        FileFilter filterDef=new FileFilter(){
             @Override
             public boolean accept(File pathname){
                 String aux=pathname.getName();
-                if(aux.endsWith(".jpg")) //Agregar algún manejador de archivos de imagen faltantes
+                if(aux.endsWith(".avi"))
+                    return true;
+                return false;
+            }
+        };      
+        File[] definicionArch=definicion.listFiles(filterDef);
+        Arrays.sort(definicionArch);
+
+        
+        FileFilter filterImg=new FileFilter(){
+            @Override
+            public boolean accept(File pathname){
+                String aux=pathname.getName();
+                if(aux.endsWith(".jpeg"))
                     return true;
                 return false;
             }
@@ -50,25 +58,21 @@ public class NewDBManager{
         File[] imagenArch=imagen.listFiles(filterImg);
         Arrays.sort(imagenArch);
         
-        for(int i=0;i<frontalArch.length;i++){
-            System.out.println(frontalArch[i].getName());
-        }
-
-        //System.out.println("compare "+fix(frontalArch[0].getName()).compareTo(fix(imagenArch[0].getName())));
-        //System.out.println(frontalArch[0].getName()+" "+imagenArch[0].getName());
+        /*for(int i=0;i<videoArch.length;i++)
+            System.out.println(videoArch[i].getName());
 
         System.out.println(new File(frontalArch[0].getName()).compareTo(lateralArch[0]));
-        Arrays.binarySearch(imagenArch, imagen);
+        Arrays.binarySearch(imagenArch, imagen);*/
         
         try{
-            fileCreator(frontalArch, lateralArch, imagenArch);
+            fileCreator(videoArch, definicionArch, imagenArch);
         }
         catch(IOException ex){
             ex.printStackTrace();
         }
     }
 
-    public static File fileCreator(File[] frontalArch, File[] lateralArch, File[] imagenArch) throws IOException{
+    public static File fileCreator(File[] videoArch, File[] definicionArch, File[] imagenArch) throws IOException{
         File archivo=new File(".\\Archivos del programa\\Base de datos.txt");
 
         if(archivo.createNewFile())
@@ -78,27 +82,30 @@ public class NewDBManager{
 
         BufferedWriter bw=new BufferedWriter(new FileWriter(archivo));
 
-        String aux=fix(frontalArch[0].getName());
+        String aux=fix(videoArch[0].getName());
         int c=1;
 
-        for(int i=1; i<frontalArch.length; i++){
-            if(derives(aux, frontalArch[i].getName())){
+        for(int i=1; i<videoArch.length; i++){
+            if(derives(aux, videoArch[i].getName())){
                 c++;
-                if(i!=frontalArch.length-1) 
+                if(i!=videoArch.length-1) 
                     continue;
                 else{
                     i++;
-                    write(i, c, bw, frontalArch, lateralArch, imagenArch);
+                    write(i, c, bw, videoArch, definicionArch, imagenArch);
                     break;
                 }
             }
-            write(i, c, bw, frontalArch, lateralArch, imagenArch);//No arreglado
+            write(i, c, bw, videoArch, definicionArch, imagenArch);
             c=1;
-            aux=fix(frontalArch[i].getName());
+            aux=fix(videoArch[i].getName());
+            if(i==videoArch.length-1){
+                i++;
+                write(i, c, bw, videoArch, definicionArch, imagenArch);
+            }
         }
 
         bw.close();
-
         return archivo;
     }
 
@@ -114,12 +121,12 @@ public class NewDBManager{
         return s1.substring(0,s1.lastIndexOf(c));
     }
     
-    public static void write(int i, int c, BufferedWriter bw, File[] frontalArch, File[] lateralArch, File[] imagenArch){
+    public static void write(int i, int c, BufferedWriter bw, File[] videoArch, File[] definicionArch, File[] imagenArch){
         try{
-            bw.write(fix(frontalArch[i-c].getName())+" "+validateVid(frontalArch[i-c], lateralArch, i-c)+" "+validateImg(frontalArch[i-c], imagenArch));
+            bw.write(fix(videoArch[i-c].getName())+" "+validate(videoArch[i-c], definicionArch)+" "+validate(videoArch[i-c], imagenArch));
             bw.newLine();
             for(c--; c>0; c--){
-                bw.write("\t"+fix(frontalArch[i-c].getName())+" "+validateVid(frontalArch[i-c], lateralArch, i-c)+" "+validateImg(frontalArch[i-c], imagenArch));
+                bw.write("\t"+fix(videoArch[i-c].getName())+" "+validate(videoArch[i-c], definicionArch)+" "+validate(videoArch[i-c], imagenArch));
                 bw.newLine();
             }
 
@@ -128,80 +135,22 @@ public class NewDBManager{
             ex.printStackTrace();
         }
     }
-
-    /*
-     public static void write(int i, int c, File [] archivosV, BufferedWriter
-     bw, File [] archivosI){ try{
-     bw.write(validate(archivosV[i-c],archivosI)+"
-     "+fix(archivosV[i-c].getName())+" "+(c-1)); bw.newLine();
-     for(c--;c>0;c--){ bw.write("\t"+validate(archivosV[i-c],archivosI)+"
-     "+fix(archivosV[i-c].getName())); bw.newLine(); } } catch(IOException
-     ax){ ax.printStackTrace(); }
-     }
-     */
-    public static String validateVid(File source, File[] target, int c){
-        int i=1, e=0;
-        String name=fix(source.getName());
-        try{
-            while(true){
-                if(name.equals(fix(target[c].getName())))
-                    return "OK";
-                c=c+(++e*(i));
-                i*=-1;
-            }
-        }
-        catch(IndexOutOfBoundsException ax){
-            i*=-1;
-            try{
-                while(true){
-                    if(name.equals(fix(target[c].getName())))
-                        return "OK";
-                    c=c+(++e*(i));
-                }
-            }
-            catch(IndexOutOfBoundsException ex){
-                return "NO";
-            }
-        }
-    }
     
-    public static String validateImg(File source, File[] target){
+    public static String validate(File source, File[] target){
         String name=fix(source.getName());
         if(name.contains("_"))  name=name.substring(0, name.lastIndexOf("_"));
         
         int i1=0, i2=target.length-1;
                 
         while(i1<=i2){
-            System.out.println("Comparing "+name+" with "+fix(target[(i1+i2)/2].getName())+" "+name.compareTo(fix(target[(i1+i2)/2].getName())));
             if(name.compareTo(fix(target[(i1+i2)/2].getName()))==0){
-                System.out.println("");
                 return "OK";
             }
             else if(name.compareTo(fix(target[(i1+i2)/2].getName()))>0)  i1=(i1+i2)/2+1;
             else //if(name.compareTo(target[(i1+i2)/2].getName())<0)
                 i2=(i1+i2)/2-1;
         }
-        System.out.println("");
         
-        /*while(ok1 && ok2){
-            try{
-            if(name.equals(fix(target[c].getName())))
-                return "OK";
-            else{
-                if(name.compareTo(target[c].getName())<0){
-                    c--;
-                    ok1=false;
-                }
-                else{
-                    c++;
-                    ok2=false;
-                }
-            }
-            }
-            catch(IndexOutOfBoundsException ax){
-                break;
-            }
-        }*/
         return "NO";
     }
 }

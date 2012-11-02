@@ -11,7 +11,7 @@ public class main{
 
         File archivo=new File(".\\Archivos del programa\\Base de datos.txt");
         if(!(archivo.exists()))
-            NewDBManager.init(); /* JOptionPane.showMessageDialog(null,"Iniciando la configuración inicial");
+            DBManager.init(); /* JOptionPane.showMessageDialog(null,"Iniciando la configuración inicial");
          JFileChooser fc=new JFileChooser();
          fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
          int respuesta;
@@ -55,11 +55,13 @@ public class main{
 
          JOptionPane.showMessageDialog(null,"El programa deberá reiniciar para adquirir\nlas configuraciones actuales.");
          return; */
-        else{//El archivo existe
+     
+        //El ya existe
+        System.out.println("YEA!");
             Diccionario d=new Diccionario(archivo);
             d.setVisible(true);
             d.pack();
             d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        }
+     
     }
 }
