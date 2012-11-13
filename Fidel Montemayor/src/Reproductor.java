@@ -1,14 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- *
- * @author jorge
- */
-/** * @(#)reproductor.java
-* * * @author jesus mar * @version 1.00 2009/4/7 */
 import java.awt.BorderLayout;
 
 import java.awt.Component;
@@ -29,37 +19,39 @@ import java.net.URL;
 
 public class Reproductor extends JPanel{
 
-public Reproductor(URL mediaURL) {
+    public Reproductor(URL mediaURL){
 
-setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
 
-Manager.setHint(Manager.LIGHTWEIGHT_RENDERER,true);
+        Manager.setHint(Manager.LIGHTWEIGHT_RENDERER, true);
 
-try{
+        try{
 
-Player mediaPlayer=Manager.createRealizedPlayer(mediaURL);
+            Player mediaPlayer=Manager.createRealizedPlayer(mediaURL);
+            Component video=mediaPlayer.getVisualComponent();
+            video.setSize(WIDTH, HEIGHT);
+            video.setVisible(true);
+            Component controls=mediaPlayer.getControlPanelComponent();
+            if(video!=null)
+                add(video, BorderLayout.CENTER);
 
-Component video= mediaPlayer.getVisualComponent(); Component
+            if(controls!=null)
+                add(controls, BorderLayout.SOUTH);
 
-controls=mediaPlayer.getControlPanelComponent();
+            mediaPlayer.start();
 
-if(video!= null){ add(video,BorderLayout.CENTER); }
+        }
+        catch(NoPlayerException noplayerexception){
 
-if(controls!=null){ add(controls,BorderLayout.SOUTH); }
+            System.out.println("no hay archivo");
+        }
+        catch(CannotRealizeException noreleace){
 
-mediaPlayer.start();
+            System.out.println("archivo desconocido");
+        }
+        catch(IOException es){
 
-}catch(NoPlayerException noplayerexception){
-
-System.out.println("no hay archivo"); }
-
-catch(CannotRealizeException noreleace){
-
-System.out.println("archivo desconocido"); }
-
-catch(IOException es){
-
-System.out.println("Error al leer la fuente");
-}
-}
+            System.out.println("Error al leer la fuente");
+        }
+    }
 }

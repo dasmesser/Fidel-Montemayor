@@ -1,17 +1,20 @@
-
+/*
+Cosmografia
+Panaderia
+Lecheria
+*/
 import ch.rakudave.suggest.JSuggestField;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
+import javax.imageio.ImageIO;
 import javax.media.CannotRealizeException;
 import javax.media.Manager;
 import javax.media.NoPlayerException;
@@ -20,14 +23,17 @@ import javax.swing.*;
 
 public class Diccionario extends JFrame{
 
-    Image imagen;
+    JLabel imagen;
     GridBagConstraints cImagen;
     
-    TextArea descripcion;
+    JLabel descripcion;
     GridBagConstraints cDescripcion;
     
     JSuggestField jsf;
     GridBagConstraints cJsf;
+    
+    Reproductor video;
+    GridBagConstraints cVideo;
 
     public Diccionario(File archivo){
         super("Diccionario Guerrero de Lengua de Señas Mexicanas");
@@ -38,32 +44,41 @@ public class Diccionario extends JFrame{
         this.setLayout(new GridBagLayout());
 
         //Inicio aleatorio
-        int num=((int) Math.random()*500+1);
+        int num=(((int)(Math.random()*10))+1);
         BufferedReader br=null;
-        String data="";
+        String data="",dataaux;
         try{
             br=new BufferedReader(new FileReader(archivo));
-            while(num>=0&&!data.startsWith("\t")){
+            do{
+                dataaux=br.readLine();
                 num--;
-                data=br.readLine();
-            }
+                if(!dataaux.startsWith("\t")){
+                    data=dataaux;
+                }
+            }while(num>0);
+            System.out.println(data);
         }
         catch(IOException ax){
             ax.printStackTrace();
         }
         finally{
-            if(br!=null)
+            if(br!=null){
                 try{
                     br.close();
                 }
                 catch(IOException ax){
                 }
+            }
         }
         //Inicio aleatorio
-
+        
         //Imagen
         cImagen=new GridBagConstraints();
-        JButton imagen=new JButton("Imagen");
+        try{
+        Image img=ImageIO.read(new URL("file:.\\Archivos del programa\\Imagenes\\"+data.substring(0, data.indexOf(" "))+".jpeg"));
+        img=img.getScaledInstance(300, 250, 0);
+        imagen=new JLabel();
+        imagen.setIcon(new ImageIcon(img));
 
         cImagen.fill=GridBagConstraints.NONE; //OCUPARA TODO EL ESPACIO DE LA CELDA
         cImagen.gridx=0; //PRIMER BOTON DE LA DERECHA
@@ -75,11 +90,48 @@ public class Diccionario extends JFrame{
         cImagen.ipady=0; //CELDAS PROPORCIONLES EN Y
 
         this.add(imagen, cImagen);
+        }catch(IOException ax){
+            ax.printStackTrace();
+        }
         //Imagen
 
         //Descripcion
-        JButton descripcion=new JButton("Descripcion");
+        String desc=data.substring(data.lastIndexOf("\t"),data.length());
+        String respar="";
+        String res="";
+        int i=0;
+        while(i<desc.length()){ //Generación del texto de la descripción
+            int lim,lio;
+
+            if(i+50>desc.length()){
+                lim=desc.length()-i;
+                respar=desc.substring(i,i+lim);
+                lio=desc.length()-i;
+            }
+            else{
+                lim=50;
+                respar=desc.substring(i,i+lim);
+                lio=respar.lastIndexOf(" ");
+            }
+            
+            if(lio==0 || lio==-1)
+                respar=respar.substring(0,lim);
+            else
+                respar=respar.substring(0,lio);
+            res+="<br>"+respar;
+            i+=respar.length();
+        }
+        
+        //Dividir el String
+        
+        descripcion=new JLabel("<html>Descripcion:"+res+"</html>");
+        descripcion.setVerticalAlignment(SwingConstants.TOP);
+        descripcion.setForeground(Color.black);
+        descripcion.setBackground(Color.white);
+        descripcion.setOpaque(true);
+        
         cDescripcion=new GridBagConstraints();
+        
         cDescripcion.fill=GridBagConstraints.BOTH;
         cDescripcion.insets=new Insets(10, 10, 10, 10);
         cDescripcion.weighty=2;
@@ -153,30 +205,47 @@ public class Diccionario extends JFrame{
 
         
         //Video
-        JButton videoB=new JButton("Video");
+        //JButton videoB=new JButton("Video");
         try{
-            Player p=Manager.createRealizedPlayer(new URL("")); //Agregar URL
+            video=new Reproductor(new URL("file:.\\Archivos del programa\\Videos\\"+data.substring(0, data.indexOf(" "))+".avi"));
+            /*Player p=Manager.createRealizedPlayer(new URL("file:.\\Archivos del programa\\Videos\\"+data.substring(0, data.indexOf(" "))+".avi")); //Agregar URL
             Component video=p.getVisualComponent();
-            Component control=p.getControlPanelComponent();
+            Component control=p.getControlPanelComponent();*/
         }
-        catch(NoPlayerException ax){
+        catch(MalformedURLException ax){
             ax.printStackTrace();
         }
-        catch(CannotRealizeException ex){
+        /*catch(CannotRealizeException ex){
             ex.printStackTrace();
         }
         catch(IOException ix){
             ix.printStackTrace();
-        }
+        }*/
 
-        cImagen.insets=new Insets(10, 10, 10, 10);
-        cImagen.gridx=1;
-        cImagen.gridy=0;
-        cImagen.fill=GridBagConstraints.BOTH;
-        cImagen.gridheight=3;
-        cImagen.gridwidth=3;
+        /*
+        cImagen.fill=GridBagConstraints.NONE; //OCUPARA TODO EL ESPACIO DE LA CELDA
+        cImagen.gridx=0; //PRIMER BOTON DE LA DERECHA
+        cImagen.gridy=0; //PRIMER BOTON DE ARRIBA
+        cImagen.insets=new Insets(10, 10, 10, 10);  //ESPACIADO
+        cImagen.weighty=2; //CRECER CON LA VENTANA EN Y
+        cImagen.weightx=2; //CRECER CON LA VENTANA EN X
+        cImagen.ipadx=0; //CELDAS PROPORCIONLES EN X
+        cImagen.ipady=0; //CELDAS PROPORCIONLES EN Y
+        */
+        cVideo=new GridBagConstraints();
+        cVideo.fill=GridBagConstraints.NONE;
+        cVideo.insets=new Insets(10, 10, 10, 10);
+        cVideo.gridx=1;
+        cVideo.gridy=0;
+        cVideo.fill=GridBagConstraints.BOTH;
+        cVideo.gridheight=3;
+        cVideo.gridwidth=3;
+        cVideo.weighty=2; 
+        cVideo.weightx=2; 
+        cVideo.ipadx=0; 
+        cVideo.ipady=0; 
 
-        this.add(videoB, cImagen);
+        this.add(video, cVideo);
         //Video
         
 

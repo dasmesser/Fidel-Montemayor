@@ -36,7 +36,7 @@ public class NewDBManager{
             @Override
             public boolean accept(File pathname){
                 String aux=pathname.getName();
-                if(aux.endsWith(".avi"))
+                if(aux.endsWith(".txt"))
                     return true;
                 return false;
             }
@@ -123,7 +123,10 @@ public class NewDBManager{
     
     public static void write(int i, int c, BufferedWriter bw, File[] videoArch, File[] definicionArch, File[] imagenArch){
         try{
-            bw.write(fix(videoArch[i-c].getName())+" "+validate(videoArch[i-c], definicionArch)+" "+validate(videoArch[i-c], imagenArch));
+            String res;
+            bw.write(fix(videoArch[i-c].getName())+" "+(res=validate(videoArch[i-c], definicionArch))+" "+validate(videoArch[i-c], imagenArch));
+            if(res.equals("OK"))
+                bw.write("\t\t\t"+new BufferedReader(new FileReader(new File(".\\Archivos del programa\\Definiciones\\"+fix(videoArch[i-c].getName())+".txt"))).readLine());
             bw.newLine();
             for(c--; c>0; c--){
                 bw.write("\t"+fix(videoArch[i-c].getName())+" "+validate(videoArch[i-c], definicionArch)+" "+validate(videoArch[i-c], imagenArch));

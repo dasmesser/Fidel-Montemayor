@@ -11,8 +11,8 @@ public class main{
 
         File archivo=new File(".\\Archivos del programa\\Base de datos.txt");
         if(!(archivo.exists()))
-            DBManager.init(); /* JOptionPane.showMessageDialog(null,"Iniciando la configuración inicial");
-         JFileChooser fc=new JFileChooser();
+            NewDBManager.init();
+         /*JFileChooser fc=new JFileChooser();
          fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
          int respuesta;
          do{
@@ -57,11 +57,10 @@ public class main{
          return; */
      
         //El ya existe
-        System.out.println("YEA!");
-            Diccionario d=new Diccionario(archivo);
-            d.setVisible(true);
-            d.pack();
-            d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Diccionario d=new Diccionario(archivo);
+        d.setVisible(true);
+        d.pack();
+        d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
      
     }
 }
