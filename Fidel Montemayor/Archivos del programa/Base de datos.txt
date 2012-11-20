@@ -1,11 +1,11 @@
-accidente OK OK
+accidente OK OK			Un terrible accidente hecho a base de dolor muerte payatsen hippitsen et lewitsken
 	accidente_1 OK OK
 	accidente_2 OK OK
-camion OK OK
+camion OK OK			Un terrible camion hecho a base de dolor muerte payatsen hippitsen et lewitsken
 	camion_1 OK OK
 	camion_2 OK OK
 	camion_3 OK OK
-delfin OK OK
-elefante OK OK
-fiesta OK OK
+delfin OK OK			Un terrible delfin hecho a base de dolor muerte payatsen hippitsen et lewitsken
+elefante OK OK			Un terrible elefante hecho a base de dolor muerte payatsen hippitsen et lewitsken
+fiesta OK OK			Una terrible fiesta hecho a base de dolor muerte payatsen hippitsen et lewitsken
 	fiesta_1 OK OK

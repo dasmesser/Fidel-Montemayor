@@ -32,12 +32,14 @@ public class Diccionario extends JFrame{
     JSuggestField jsf;
     GridBagConstraints cJsf;
     
-    Reproductor video;
+    PlayerApplet video;
     GridBagConstraints cVideo;
 
     public Diccionario(File archivo){
-        super("Diccionario Guerrero de Lengua de Señas Mexicanas");
-
+        super("Fullscreen");
+        
+        this.setTitle("Diccionario Guerrero de Lengua de Señas Mexicanas");
+        
         setContentPane(new MyPanel(".\\Archivos del programa\\Fondo.jpg", true));
 
         this.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -181,7 +183,7 @@ public class Diccionario extends JFrame{
 
         jsf=new JSuggestField(this, vec);
         jsf.addActionListener(new Refresh());
-
+        
         this.add(jsf, cJsf);
         //Buscador
 
@@ -207,7 +209,8 @@ public class Diccionario extends JFrame{
         //Video
         //JButton videoB=new JButton("Video");
         try{
-            video=new Reproductor(new URL("file:.\\Archivos del programa\\Videos\\"+data.substring(0, data.indexOf(" "))+".avi"));
+            video=new PlayerApplet();
+            video.init(new URL("file:.\\Archivos del programa\\Videos\\"+data.substring(0, data.indexOf(" "))+".avi"));
             /*Player p=Manager.createRealizedPlayer(new URL("file:.\\Archivos del programa\\Videos\\"+data.substring(0, data.indexOf(" "))+".avi")); //Agregar URL
             Component video=p.getVisualComponent();
             Component control=p.getControlPanelComponent();*/
