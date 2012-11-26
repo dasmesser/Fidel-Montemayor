@@ -1,5 +1,6 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,14 +25,22 @@ public class MyPanel extends JComponent{
         try{
             bi=ImageIO.read(new File(archivo));
             if(resize)  setPreferredSize(new Dimension(bi.getWidth(),bi.getHeight()));
-            else        setPreferredSize(new Dimension(600,600));
+            else{
+                Toolkit tk = Toolkit.getDefaultToolkit();
+                int xSize = ((int) tk.getScreenSize().getWidth());  
+                int ySize = ((int) tk.getScreenSize().getHeight());  
+                //this.setSize(xSize,ySize); 
+                //
+                setPreferredSize(new Dimension(800,600));
+            }
         }catch(IOException ax){
             ax.printStackTrace();
         }
         
     }
     public void paintComponent(Graphics g){
-        g.drawImage(bi,0,0,null);
+        Dimension d=getSize();
+        g.drawImage(bi,0,0,d.width,d.height,this);
     }
     
     

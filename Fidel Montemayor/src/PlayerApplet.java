@@ -18,9 +18,11 @@ import javax.media.*;
 public class PlayerApplet extends Applet{
 
     Player player=null;
+    boolean play;
 
-    public void init(URL url){
+    public void init(URL url, boolean play){
 
+        this.play=play;
         setLayout(new BorderLayout());
 
         //String mediaFile=getParameter("FILE");
@@ -34,8 +36,15 @@ public class PlayerApplet extends Applet{
             if(player.getVisualComponent()!=null)
                 add("Center", player.getVisualComponent());
 
-            if(player.getControlPanelComponent()!=null)
+            if(player.getControlPanelComponent()!=null && play){
                 add("South", player.getControlPanelComponent());
+                player.start();
+            }
+            
+            if(!play){
+                player.start();
+                player.stop();
+            }
 
         }
         catch(Exception e){
@@ -47,7 +56,7 @@ public class PlayerApplet extends Applet{
 
     public void start(){
 
-        player.start();
+        if(play) player.start();
 
     }
 
