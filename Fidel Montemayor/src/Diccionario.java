@@ -3,21 +3,16 @@ import ch.rakudave.suggest.JSuggestField;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.imageio.ImageIO;
-import javax.media.CannotRealizeException;
-import javax.media.Manager;
-import javax.media.NoPlayerException;
-import javax.media.Player;
 import javax.swing.*;
 
 public class Diccionario extends JFrame{
@@ -30,7 +25,7 @@ public class Diccionario extends JFrame{
     GridBagConstraints cJsf;
     PlayerApplet video;
     GridBagConstraints cVideo;
-    ArrayList<PlayerApplet> variaciones;
+    ArrayList<JButton> variaciones;
     GridBagConstraints cVariaciones;
 
     public Diccionario(File archivo){
@@ -64,7 +59,6 @@ public class Diccionario extends JFrame{
                 if(!dataaux.startsWith("\t"))
                     data=dataaux;
             }while(num>0);
-            System.out.println(data);
 
             //Inicio aleatorio
 
@@ -119,11 +113,9 @@ public class Diccionario extends JFrame{
                 while((strLine=reader.readLine())!=null)
                     if(!(strLine.startsWith("\t"))){
                         vec.add(strLine.substring(0, strLine.indexOf(" ")));
-                        System.out.println(strLine);
                     }
             }
             catch(IOException ax){
-                ax.printStackTrace();
             }
             finally{
                 if(reader!=null)
@@ -158,7 +150,6 @@ public class Diccionario extends JFrame{
                 video.setBounds(new Rectangle(new Dimension(350, 350)));
             }
             catch(MalformedURLException ax){
-                ax.printStackTrace();
             }
 
             cVideo=new GridBagConstraints();
@@ -180,7 +171,7 @@ public class Diccionario extends JFrame{
             //Variantes
             //JButton variantes=new JButton("Variantes");
 
-            variaciones=new ArrayList<PlayerApplet>();
+            variaciones=new ArrayList<>();
 
             cVariaciones=new GridBagConstraints();
             cVariaciones.fill=GridBagConstraints.NONE; //OCUPARA TODO EL ESPACIO DE LA CELDA
@@ -206,8 +197,8 @@ public class Diccionario extends JFrame{
              cImagen.gridy=4;
              this.add(new JButton("4"), cImagen); */
 
-            cVariaciones.gridx=0;
-            cVariaciones.gridy=4;
+            //cVariaciones.gridx=0;
+            //cVariaciones.gridy=4;
 
             /* PlayerApplet pa=new PlayerApplet();
              pa.init(new URL("file:.\\Archivos del programa\\Videos\\"+"delfin"+".avi"), true);
@@ -216,25 +207,40 @@ public class Diccionario extends JFrame{
              this.add(pa, cVariaciones); */
 
 
-            JButton j=new JButton("iiiiiiiiiiiiiso!!!!!");
-            this.add(j, cVariaciones);
+            //JButton j=new JButton("iiiiiiiiiiiiiso!!!!!");
+            //this.add(j, cVariaciones);
 
-            /* if(!data.startsWith("\t")){
-             dataaux="";
-             int con=0;
-             while((dataaux=br.readLine()).startsWith("/t")){
-             PlayerApplet pa=new PlayerApplet();
-             pa.init(new URL("file:.\\Archivos del programa\\Videos\\"+dataaux.substring(1, dataaux.indexOf(" "))+".avi"), true);
+            if(!data.startsWith("\t")){
+                BufferedReader read=null;
+                try{
+                    read=new BufferedReader(new FileReader(archivo));
+                    while(!(read.readLine()).startsWith(data));
 
-             variaciones.add(pa);
+                
+                dataaux="";
+                int con=0;
+                while((dataaux=read.readLine()).contains(data.substring(0,data.indexOf(" "))+"_")){
+                    JButton jb=new JButton();
+                    jb.setName(dataaux.substring(1, dataaux.indexOf(" ")));
+                    jb.setText("Variacion "+((char)(97+con)));
 
-             cVariaciones.gridx=con%4;
-             cVariaciones.gridy=con/4+4;
-             this.add(variaciones.get(con++), cVariaciones);
-             }while(dataaux.startsWith("/t"));
-             }
-             else{
-             } */
+                    variaciones.add(jb);
+
+                    cVariaciones.gridx=con%4;
+                    cVariaciones.gridy=con/4+4;
+                    this.add(variaciones.get(con++), cVariaciones);
+                }
+                }catch(Exception ax){}
+                finally{
+                    if(read!=null){
+                        try{
+                            read.close();
+                        }catch(IOException ex){}
+                    }
+                }
+            }
+            else{
+            }
 
             //this.add(varia, cImagen);
             //Variantes
@@ -243,7 +249,6 @@ public class Diccionario extends JFrame{
             //FIN
         }
         catch(IOException ax){
-            ax.printStackTrace();
         }
         finally{
             if(br!=null)
@@ -251,7 +256,6 @@ public class Diccionario extends JFrame{
                     br.close();
                 }
                 catch(IOException ax){
-                    ax.printStackTrace();
                 }
         }
     }
@@ -267,34 +271,34 @@ public class Diccionario extends JFrame{
         catch(IOException ax){
         }
     }
-    
+
     public String setDesc(String data){
         String desc=data.substring(data.lastIndexOf("\t"), data.length());
-            String respar="";
-            String res="";
-            int i=0;
-            while(i<desc.length()){ //Generación del texto de la descripción
-                int lim, lio;
+        String respar="";
+        String res="";
+        int i=0;
+        while(i<desc.length()){ //Generación del texto de la descripción
+            int lim, lio;
 
-                if(i+65>desc.length()){
-                    lim=desc.length()-i;
-                    respar=desc.substring(i, i+lim);
-                    lio=desc.length()-i;
-                }
-                else{
-                    lim=65;
-                    respar=desc.substring(i, i+lim);
-                    lio=respar.lastIndexOf(" ");
-                }
-
-                if(lio==0||lio==-1)
-                    respar=respar.substring(0, lim);
-                else
-                    respar=respar.substring(0, lio);
-                res+="<br>"+respar;
-                i+=respar.length();
+            if(i+65>desc.length()){
+                lim=desc.length()-i;
+                respar=desc.substring(i, i+lim);
+                lio=desc.length()-i;
             }
-            return "<html>Descripcion:"+res+"</html>";
+            else{
+                lim=65;
+                respar=desc.substring(i, i+lim);
+                lio=respar.lastIndexOf(" ");
+            }
+
+            if(lio==0||lio==-1)
+                respar=respar.substring(0, lim);
+            else
+                respar=respar.substring(0, lio);
+            res+="<br>"+respar;
+            i+=respar.length();
+        }
+        return "<html>Descripcion:"+res+"</html>";
     }
 
     public class Refresh implements ActionListener{
@@ -313,7 +317,7 @@ public class Diccionario extends JFrame{
                     do{
                         dataaux=br.readLine();
                     }while(!dataaux.startsWith(data));
-                    
+
                     descripcion.setText(setDesc(dataaux));
                     video.init(new URL("file:.\\Archivos del programa\\Videos\\"+dataaux.substring(0, dataaux.indexOf(" "))+".avi"), true);
                 }
