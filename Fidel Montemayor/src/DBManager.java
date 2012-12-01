@@ -49,7 +49,7 @@ public class DBManager{
             @Override
             public boolean accept(File pathname){
                 String aux=pathname.getName();
-                if(aux.endsWith(".jpeg"))
+                if(aux.endsWith(".jpeg")||aux.endsWith(".jpg"))
                     return true;
                 return false;
             }

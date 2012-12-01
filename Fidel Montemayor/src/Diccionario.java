@@ -27,9 +27,13 @@ public class Diccionario extends JFrame{
     GridBagConstraints cVideo;
     ArrayList<JButton> variaciones;
     GridBagConstraints cVariaciones;
+    Diccionario dic;
+    MyPanel panel;
+    Vector<String> vec;
 
     public Diccionario(File archivo){
         super("Fullscreen");
+        dic=this;
 
         /* Toolkit tk = Toolkit.getDefaultToolkit();
          int xSize = ((int) tk.getScreenSize().getWidth());
@@ -42,7 +46,7 @@ public class Diccionario extends JFrame{
 
             this.setTitle("Diccionario Guerrero de Lengua de Señas Mexicanas");
 
-            setContentPane(new MyPanel(".\\Archivos del programa\\Fondo.jpg", false));
+            setContentPane(panel=new MyPanel(".\\Archivos del programa\\Fondo.jpg", false));
 
             this.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             this.setLayout(new GridBagLayout());
@@ -105,15 +109,14 @@ public class Diccionario extends JFrame{
             //Descripcion
 
             //Buscador
-            Vector<String> vec=new Vector<>();
+            vec=new Vector<String>();
             BufferedReader reader=null;
             try{
                 reader=new BufferedReader(new FileReader(archivo));
                 String strLine;
                 while((strLine=reader.readLine())!=null)
-                    if(!(strLine.startsWith("\t"))){
+                    if(!(strLine.startsWith("\t")))
                         vec.add(strLine.substring(0, strLine.indexOf(" ")));
-                    }
             }
             catch(IOException ax){
             }
@@ -169,80 +172,18 @@ public class Diccionario extends JFrame{
 
 
             //Variantes
-            //JButton variantes=new JButton("Variantes");
-
-            variaciones=new ArrayList<>();
+            variaciones=new ArrayList<JButton>();
 
             cVariaciones=new GridBagConstraints();
-            cVariaciones.fill=GridBagConstraints.NONE; //OCUPARA TODO EL ESPACIO DE LA CELDA
-            cVariaciones.insets=new Insets(10, 10, 10, 10);  //ESPACIADO
-            cVariaciones.weighty=2; //CRECER CON LA VENTANA EN Y
-            cVariaciones.weightx=2; //CRECER CON LA VENTANA EN X
-            cVariaciones.ipadx=0; //CELDAS PROPORCIONLES EN X
-            cVariaciones.ipady=0; //CELDAS PROPORCIONLES EN Y
-
-            /* cImagen.gridx=0;
-             cImagen.gridy=4;
-             this.add(new JButton("1"), cImagen);
-
-             cImagen.gridx=1;
-             cImagen.gridy=4;
-             this.add(new JButton("2"), cImagen);
-
-             cImagen.gridx=2;
-             cImagen.gridy=4;
-             this.add(new JButton("3"), cImagen);
-
-             cImagen.gridx=3;
-             cImagen.gridy=4;
-             this.add(new JButton("4"), cImagen); */
-
-            //cVariaciones.gridx=0;
-            //cVariaciones.gridy=4;
-
-            /* PlayerApplet pa=new PlayerApplet();
-             pa.init(new URL("file:.\\Archivos del programa\\Videos\\"+"delfin"+".avi"), true);
-             pa.setBounds(new Rectangle(new Dimension(100, 100)));
-
-             this.add(pa, cVariaciones); */
+            cVariaciones.fill=GridBagConstraints.NONE;
+            cVariaciones.insets=new Insets(10, 10, 10, 10);
+            cVariaciones.weighty=2;
+            cVariaciones.weightx=2;
+            cVariaciones.ipadx=0;
+            cVariaciones.ipady=0;
 
 
-            //JButton j=new JButton("iiiiiiiiiiiiiso!!!!!");
-            //this.add(j, cVariaciones);
-
-            if(!data.startsWith("\t")){
-                BufferedReader read=null;
-                try{
-                    read=new BufferedReader(new FileReader(archivo));
-                    while(!(read.readLine()).startsWith(data));
-
-                
-                dataaux="";
-                int con=0;
-                while((dataaux=read.readLine()).contains(data.substring(0,data.indexOf(" "))+"_")){
-                    JButton jb=new JButton();
-                    jb.setName(dataaux.substring(1, dataaux.indexOf(" ")));
-                    jb.setText("Variacion "+((char)(97+con)));
-
-                    variaciones.add(jb);
-
-                    cVariaciones.gridx=con%4;
-                    cVariaciones.gridy=con/4+4;
-                    this.add(variaciones.get(con++), cVariaciones);
-                }
-                }catch(Exception ax){}
-                finally{
-                    if(read!=null){
-                        try{
-                            read.close();
-                        }catch(IOException ex){}
-                    }
-                }
-            }
-            else{
-            }
-
-            //this.add(varia, cImagen);
+            setVar(data, archivo);
             //Variantes
 
 
@@ -301,6 +242,63 @@ public class Diccionario extends JFrame{
         return "<html>Descripcion:"+res+"</html>";
     }
 
+    public void setVar(String data, File archivo){
+
+        for(JButton jb : variaciones)
+            panel.remove(jb);
+
+        variaciones.clear();
+
+        variaciones=new ArrayList<JButton>();
+        if(!data.contains("_")){
+            BufferedReader read=null;
+            try{
+                read=new BufferedReader(new FileReader(archivo));
+                while(!(read.readLine()).startsWith(data));
+
+
+                String dataaux="";
+                int con=0;
+                while((dataaux=read.readLine()).contains(data.substring(0, data.indexOf(" "))+"_")){
+                    JButton jb=new JButton();
+                    jb.setName(dataaux.substring(1, dataaux.indexOf(" ")));
+                    jb.setText("Variacion "+((char) (97+con)));
+
+                    Change c;
+                    jb.addActionListener((c=new Change()));
+                    c.name=jb.getName();
+                    
+                    variaciones.add(jb);
+
+                    cVariaciones.gridx=con%4;
+                    cVariaciones.gridy=con/4+4;
+                    this.add(variaciones.get(con++), cVariaciones);
+                }
+            }
+            catch(Exception ax){
+            }
+            finally{
+                if(read!=null)
+                    try{
+                        read.close();
+                    }
+                    catch(IOException ex){
+                    }
+            }
+        }
+        else{
+            JButton jb=new JButton();
+            jb.setName(data.substring(1, data.indexOf(" ")));
+            jb.setText("Variacion Global");
+            variaciones.add(jb);
+            
+            cVariaciones.gridx=0;
+            cVariaciones.gridy=4;
+            
+            this.add(jb,cVariaciones);
+        }
+    }
+
     public class Refresh implements ActionListener{
 
         @Override
@@ -318,10 +316,17 @@ public class Diccionario extends JFrame{
                         dataaux=br.readLine();
                     }while(!dataaux.startsWith(data));
 
-                    descripcion.setText(setDesc(dataaux));
-                    video.init(new URL("file:.\\Archivos del programa\\Videos\\"+dataaux.substring(0, dataaux.indexOf(" "))+".avi"), true);
+                    descripcion.setText(setDesc(dataaux));//Descripcion setteada
+
+                    dic.remove(video);
+                    video=null;
+                    video=new PlayerApplet();
+                    video.init(new URL("file:.\\Archivos del programa\\Videos\\"+dataaux.substring(0, dataaux.indexOf(" "))+".avi"), true);//Video setteado
+                    dic.add(video, cVideo);
+                    setVar(data+" ", new File(".\\Archivos del programa\\Base de datos.txt"));//Variables setteadas
                 }
-                catch(IOException ax){
+                catch(Exception ax){
+                    ax.printStackTrace();
                 }
                 finally{
                     if(br!=null)
@@ -333,5 +338,25 @@ public class Diccionario extends JFrame{
                 }
             }
         }
+    }
+    
+    public class Change implements ActionListener{
+
+        String name;
+        
+        @Override
+        public void actionPerformed(ActionEvent e){
+                    dic.remove(video);
+                    video=null;
+                    video=new PlayerApplet();
+                    try{
+                    video.init(new URL("file:.\\Archivos del programa\\Videos\\"+name+".avi"), true);//Video setteado
+                    }catch(Exception ax){
+                        ax.printStackTrace();
+                    }
+                    dic.add(video, cVideo);           
+                    setVar(name+" ", new File(".\\Archivos del programa\\Base de datos.txt"));
+        }
+        
     }
 }
